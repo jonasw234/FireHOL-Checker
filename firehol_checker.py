@@ -56,11 +56,18 @@ def read_ip_addresses(input_file: str):
     Parameters
     ----------
     input_file : str
-        The path to the input file.
+        The path to the input file. One IP/CIDR per line.
     """
     # Load the IP addresses from the input file
+    ips = []
     with open(input_file, "r") as file:
-        return file.read().splitlines()
+        for line in file.read().splitlines():
+            if "/" in line:
+                # CIDR notation
+                ips.extend([str(ip) for ip in ipaddress.IPv4Network(line)])
+            else:
+                ips.append(line)
+        return ips
 
 
 def is_ip_in_range(ip: str, range_str: str) -> bool:
